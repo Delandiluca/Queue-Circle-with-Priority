@@ -16,7 +16,54 @@ int isFull(Queue p);
 void push(Queue *queue, int elem);
 void printQueue(Queue queue);
 int peek(Queue queue);
-int pop(Queue queue);
+int pop(Queue *queue);
+unsigned int chooseOption(void);
+
+int main(void) {
+
+  Queue queue;
+  createEmptyQueue(&queue);
+
+  unsigned int option;  
+  int popped;
+  while ((option = chooseOption()) != 0) { // APENAS USADO PARA TESTE DO CÓDIGO....
+    switch (option) {
+    case 1:
+      puts("\nDigite uma idade:");
+      int age;
+      scanf("%d", &age);
+      push(&queue, age);
+      puts("\nInserido na fila com sucesso!!");
+      break;
+    case 2:
+      printQueue(queue);
+      break;
+    case 3:
+      printf("\nO próximo da fila é o número: %d", peek(queue)); 
+      break;
+    case 4:
+      popped = pop(&queue);
+      puts("\nElemento retirado com sucesso!!");
+      break;
+    }
+  }
+
+  return 0;
+}
+
+unsigned int chooseOption(void){
+  unsigned int option;
+  puts("\n&*&*&*&*&**MENU**&*&*&*&*&");
+  puts("&* 1 - Incluir na Fila  *&");
+  puts("&* 2 - Listar Fila      *&");
+  puts("&* 3 - Próximo na Fila  *&");
+  puts("&* 4 - Remover da Fila  *&");
+  puts("&* 0 - Sair             *&");
+  puts("&*&*&*&*&*&*&*&*&*&*&*&*&*");
+  puts("\nDigite a opção: ");
+  scanf("%u", &option);
+  return option;
+}
 
 void createEmptyQueue(Queue *p) { //Função de iniciliazação da Fila
   p->init = 0;
@@ -57,11 +104,11 @@ void push(Queue *queue, int elem) { //Função responsável por colocar elemento
   }
 }
 
-int pop(Queue queue){ //Função responsável por eliminar elemento da fila
+int pop(Queue *queue){ //Função responsável por eliminar elemento da fila
   int poped = 0;
-  if(!isEmpty(queue)){
-    int poped = queue.object[queue.init];
-    queue.init = (queue.init + 1) % MAX_SIZE;
+  if(!isEmpty(*queue)){
+    int poped = queue->object[queue->init];
+    queue->init = (queue->init + 1) % MAX_SIZE;
   } else {
     puts("\nERROR: Queue Underflow");
     exit(1);
@@ -69,13 +116,18 @@ int pop(Queue queue){ //Função responsável por eliminar elemento da fila
   return poped;
 }
 
-void printQueue(Queue queue) { //Imprimir toda a fila completa, ou seja, (INIT >= X < END) 
+void printQueue(Queue queue) { //Imprimir toda a fila completa, considerando impressão circular
   if (!isEmpty(queue)) {
     int ini = queue.init;
     int end = queue.end;
-    for (int i = ini; i <= end; i++) {
+    int i = ini;
+    while(i != end){
       printf("\n%d", queue.object[i]);
+      int nextPos = (i + 1) % MAX_SIZE;
+      i = nextPos;
     }
+    puts("");
+      
   } else {
     puts("\nERROR: Queue Underflow");
     exit(1);
@@ -91,32 +143,3 @@ int peek(Queue queue){ //Esta Função mostra quem é o próximo da fila
   }
 }
 
-int main(void) {
-
-  Queue queue;
-  createEmptyQueue(&queue);
-
-  
-
-  while (1) { // APENAS USADO PARA TESTE DO CÓDIGO....
-    puts("\nDigite a opção: ");
-    int op;
-    scanf("%d", &op);
-    switch (op) {
-    case 1:
-      puts("\nDigite uma idade:");
-      int age;
-      scanf("%d", &age);
-      push(&queue, age);
-      break;
-    case 2:
-      printQueue(queue);
-      break;
-    case 3:
-      printf("\nO próximo da fila é o número: %d", peek(queue)); 
-      break;
-    }
-  }
-
-  return 0;
-}
